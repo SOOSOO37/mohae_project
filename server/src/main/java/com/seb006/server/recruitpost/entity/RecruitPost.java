@@ -9,10 +9,7 @@ import com.seb006.server.participation.entity.Participation;
 import com.seb006.server.prfpost.entity.PrfPost;
 import com.seb006.server.prfpostcomment.entity.PrfPostComment;
 import com.seb006.server.recruitpostcomment.entity.RecruitPostComment;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.Range;
 
@@ -24,7 +21,6 @@ import java.util.List;
 
 @DynamicUpdate
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -48,12 +44,6 @@ public class RecruitPost extends Auditable {
     @Range(max= 10)
     private Integer currentNumber = 0;
 
-
-    //모집기간
-    //private long startTimeMill;
-    // long endTimeMill;
-
-    //모집기간
     private String dueDate;
 
     @Column(nullable = false)
