@@ -9,6 +9,7 @@ import com.seb006.server.recruitpost.dto.RecruitPostResponseDto;
 import com.seb006.server.recruitpost.entity.RecruitPost;
 import com.seb006.server.recruitpostcomment.dto.RecruitPostCommentResponseDto;
 import org.mapstruct.Mapper;
+import org.springframework.beans.BeanUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,13 +27,7 @@ public interface RecruitPostMapper {
 
         recruitPost.setPrfPost(prfPost);
         recruitPost.setMember(member);
-        recruitPost.setTitle(recruitCreateDto.getTitle());
-        recruitPost.setCategory(recruitCreateDto.getCategory());
-        recruitPost.setContent(recruitCreateDto.getContent());
-        recruitPost.setRecruitNumber(recruitCreateDto.getRecruitNumber());
-        recruitPost.setDueDate(recruitCreateDto.getDueDate());
-        recruitPost.setAge(recruitCreateDto.getAge());
-        recruitPost.setTags(recruitCreateDto.getTags());
+        BeanUtils.copyProperties(recruitCreateDto, recruitPost);
 
         return recruitPost;
     }
@@ -42,21 +37,10 @@ public interface RecruitPostMapper {
     default RecruitPostResponseDto recruitPostToRecruitPostResponseDto (RecruitPost recruitPost){
         RecruitPostResponseDto recruitPostResponseDto = new RecruitPostResponseDto();
 
-        recruitPostResponseDto.setId(recruitPost.getId());
-        recruitPostResponseDto.setTitle(recruitPost.getTitle());
-        recruitPostResponseDto.setCategory(recruitPost.getCategory());
-        recruitPostResponseDto.setContent(recruitPost.getContent());
-        recruitPostResponseDto.setRecruitNumber(recruitPost.getRecruitNumber());
-        recruitPostResponseDto.setCurrentNumber(recruitPost.getCurrentNumber());
-        recruitPostResponseDto.setRecruitStatus(recruitPost.getRecruitStatus());
-        recruitPostResponseDto.setDueDate(recruitPost.getDueDate());
-        recruitPostResponseDto.setCreatedAt(recruitPost.getCreatedAt());
-        recruitPostResponseDto.setModifiedAt(recruitPost.getModifiedAt());
+        BeanUtils.copyProperties(recruitPost, recruitPostResponseDto);
+
         recruitPostResponseDto.setMemberId(recruitPost.getMember().getId());
         recruitPostResponseDto.setNickName(recruitPost.getMember().getNickName());
-        recruitPostResponseDto.setAge(recruitPost.getAge());
-        recruitPostResponseDto.setTags(recruitPost.getTags());
-        recruitPostResponseDto.setLikeCount(recruitPost.getLikeCount());
 
         return recruitPostResponseDto;
     }
@@ -64,21 +48,10 @@ public interface RecruitPostMapper {
     default RecruitPostResponseDto recruitPostToRecruitPostResponseDto (RecruitPost recruitPost, List<Long> likedRecruitIds){
         RecruitPostResponseDto recruitPostResponseDto = new RecruitPostResponseDto();
 
-        recruitPostResponseDto.setId(recruitPost.getId());
-        recruitPostResponseDto.setTitle(recruitPost.getTitle());
-        recruitPostResponseDto.setCategory(recruitPost.getCategory());
-        recruitPostResponseDto.setContent(recruitPost.getContent());
-        recruitPostResponseDto.setRecruitNumber(recruitPost.getRecruitNumber());
-        recruitPostResponseDto.setCurrentNumber(recruitPost.getCurrentNumber());
-        recruitPostResponseDto.setRecruitStatus(recruitPost.getRecruitStatus());
-        recruitPostResponseDto.setDueDate(recruitPost.getDueDate());
-        recruitPostResponseDto.setCreatedAt(recruitPost.getCreatedAt());
-        recruitPostResponseDto.setModifiedAt(recruitPost.getModifiedAt());
+        BeanUtils.copyProperties(recruitPost, recruitPostResponseDto);
+
         recruitPostResponseDto.setMemberId(recruitPost.getMember().getId());
         recruitPostResponseDto.setNickName(recruitPost.getMember().getNickName());
-        recruitPostResponseDto.setAge(recruitPost.getAge());
-        recruitPostResponseDto.setTags(recruitPost.getTags());
-        recruitPostResponseDto.setLikeCount(recruitPost.getLikeCount());
 
         if(likedRecruitIds.contains(recruitPost.getId())){
             recruitPostResponseDto.setLiked(true);
@@ -88,38 +61,23 @@ public interface RecruitPostMapper {
     }
 
     default RecruitPostDetailResponseDto recruitPostToRecruitDetailResponseDto(RecruitPost recruitPost){
-
         RecruitPostDetailResponseDto recruitPostDetailResponseDto = new RecruitPostDetailResponseDto();
-        recruitPostDetailResponseDto.setId(recruitPost.getId());
+
+        BeanUtils.copyProperties(recruitPost,recruitPostDetailResponseDto);
         recruitPostDetailResponseDto.setMemberId(recruitPost.getMember().getId());
         recruitPostDetailResponseDto.setNickName(recruitPost.getMember().getNickName());
-        recruitPostDetailResponseDto.setTitle(recruitPost.getTitle());
-        recruitPostDetailResponseDto.setCategory(recruitPost.getCategory());
-        recruitPostDetailResponseDto.setContent(recruitPost.getContent());
-        recruitPostDetailResponseDto.setRecruitNumber(recruitPost.getRecruitNumber());
-        recruitPostDetailResponseDto.setCurrentNumber(recruitPost.getCurrentNumber());
-        recruitPostDetailResponseDto.setRecruitStatus(recruitPost.getRecruitStatus());
-        recruitPostDetailResponseDto.setDueDate(recruitPost.getDueDate());
-        recruitPostDetailResponseDto.setAge(recruitPost.getAge());
-        recruitPostDetailResponseDto.setTags(recruitPost.getTags());
-        recruitPostDetailResponseDto.setLikeCount(recruitPost.getLikeCount());
         recruitPostDetailResponseDto.setPrfPostId(recruitPost.getPrfPost().getId());
 
-        recruitPostDetailResponseDto.setComments(recruitPost.getComments().stream()
-                .map(comment-> {
-                    RecruitPostCommentResponseDto.RecruitPostCommentResponseDtoBuilder recruitPostCommentResponseDto = RecruitPostCommentResponseDto.builder();
-                    recruitPostCommentResponseDto.id(comment.getId());
-                    recruitPostCommentResponseDto.content(comment.getContent());
-                    recruitPostCommentResponseDto.createdAt(comment.getCreatedAt());
-                    recruitPostCommentResponseDto.modifiedAt(comment.getModifiedAt());
-                    recruitPostCommentResponseDto.memberId(comment.getMember().getId());
-                    recruitPostCommentResponseDto.nickname(comment.getMember().getNickName());
-
-                    return recruitPostCommentResponseDto.build();
+        List<RecruitPostCommentResponseDto> commentResponseDtos = recruitPost.getComments().stream()
+                .map(comment -> {
+                    RecruitPostCommentResponseDto responseDto = new RecruitPostCommentResponseDto();
+                    BeanUtils.copyProperties(comment, responseDto);
+                    responseDto.setMemberId(comment.getMember().getId());
+                    responseDto.setNickname(comment.getMember().getNickName());
+                    return responseDto;
                 })
-                .collect(Collectors.toList()));
-        recruitPostDetailResponseDto.setCreatedAt(recruitPost.getCreatedAt());
-        recruitPostDetailResponseDto.setModifiedAt(recruitPost.getModifiedAt());
+                .collect(Collectors.toList());
+        recruitPostDetailResponseDto.setComments(commentResponseDtos);
 
         return recruitPostDetailResponseDto;
     }
