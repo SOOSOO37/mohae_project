@@ -8,11 +8,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
-@Builder
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class RecruitPostResponseDto {
 
     private Long id;

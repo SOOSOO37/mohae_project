@@ -1,16 +1,14 @@
 package com.seb006.server.recruitpost.mapper;
 
-import com.seb006.server.member.dto.MemberDto;
 import com.seb006.server.member.entity.Member;
 import com.seb006.server.prfpost.entity.PrfPost;
 import com.seb006.server.recruitpost.dto.RecruitPostDetailResponseDto;
-import com.seb006.server.recruitpost.dto.RecruitPostDto;
-import com.seb006.server.recruitpost.dto.RecruitPostPatchDto;
+import com.seb006.server.recruitpost.dto.RecruitCreateDto;
+import com.seb006.server.recruitpost.dto.RecruitPostUpdateDto;
 import com.seb006.server.recruitpost.dto.RecruitPostResponseDto;
 import com.seb006.server.recruitpost.entity.RecruitPost;
 import com.seb006.server.recruitpostcomment.dto.RecruitPostCommentResponseDto;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,27 +16,27 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface RecruitPostMapper {
 
-    default RecruitPost recruitPostDtoToRecruitPost (RecruitPostDto recruitPostDto){
+    default RecruitPost recruitPostDtoToRecruitPost (RecruitCreateDto recruitCreateDto){
         RecruitPost recruitPost = new RecruitPost();
 
         PrfPost prfPost = new PrfPost();
-        prfPost.setId(recruitPostDto.getPrfPostId());
+        prfPost.setId(recruitCreateDto.getPrfPostId());
 
         Member member = new Member();
 
         recruitPost.setPrfPost(prfPost);
         recruitPost.setMember(member);
-        recruitPost.setTitle(recruitPostDto.getTitle());
-        recruitPost.setCategory(recruitPostDto.getCategory());
-        recruitPost.setContent(recruitPostDto.getContent());
-        recruitPost.setRecruitNumber(recruitPostDto.getRecruitNumber());
-        recruitPost.setDueDate(recruitPostDto.getDueDate());
-        recruitPost.setAge(recruitPostDto.getAge());
-        recruitPost.setTags(recruitPostDto.getTags());
+        recruitPost.setTitle(recruitCreateDto.getTitle());
+        recruitPost.setCategory(recruitCreateDto.getCategory());
+        recruitPost.setContent(recruitCreateDto.getContent());
+        recruitPost.setRecruitNumber(recruitCreateDto.getRecruitNumber());
+        recruitPost.setDueDate(recruitCreateDto.getDueDate());
+        recruitPost.setAge(recruitCreateDto.getAge());
+        recruitPost.setTags(recruitCreateDto.getTags());
 
         return recruitPost;
     }
-    RecruitPost recruitPostPatchDtoToRecruitPost (RecruitPostPatchDto recruitPostPatchDto);
+    RecruitPost recruitPostPatchDtoToRecruitPost (RecruitPostUpdateDto recruitPostUpdateDto);
 
 
     default RecruitPostResponseDto recruitPostToRecruitPostResponseDto (RecruitPost recruitPost){

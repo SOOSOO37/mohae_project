@@ -4,10 +4,9 @@ import com.seb006.server.global.response.MultiResponseDto;
 import com.seb006.server.like.service.LikeService;
 import com.seb006.server.member.entity.Member;
 import com.seb006.server.member.service.MemberService;
-import com.seb006.server.prfpost.dto.PrfPostDto;
 import com.seb006.server.recruitpost.dto.RecruitPostDetailResponseDto;
-import com.seb006.server.recruitpost.dto.RecruitPostDto;
-import com.seb006.server.recruitpost.dto.RecruitPostPatchDto;
+import com.seb006.server.recruitpost.dto.RecruitCreateDto;
+import com.seb006.server.recruitpost.dto.RecruitPostUpdateDto;
 import com.seb006.server.recruitpost.dto.RecruitPostResponseDto;
 import com.seb006.server.recruitpost.entity.RecruitPost;
 import com.seb006.server.recruitpost.mapper.RecruitPostMapper;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Positive;
 import java.net.URI;
-import java.security.Principal;
 import java.util.List;
 
 
@@ -48,9 +46,9 @@ public class RecruitPostController {
 
     @PostMapping
     public ResponseEntity postRecruitPost(@AuthenticationPrincipal Member member,
-                                          @RequestBody RecruitPostDto recruitPostDto){
+                                          @RequestBody RecruitCreateDto recruitCreateDto){
 
-        RecruitPost recruitPost = service.createRecruitPost(member,mapper.recruitPostDtoToRecruitPost(recruitPostDto));
+        RecruitPost recruitPost = service.createRecruitPost(member,mapper.recruitPostDtoToRecruitPost(recruitCreateDto));
 
         URI location = UriCreator.createUri(RECRUITPOST_DEFAULT_URL,recruitPost.getId());
 
@@ -59,9 +57,9 @@ public class RecruitPostController {
 
     @PatchMapping("/{recruit-post-id}")
     public ResponseEntity patchRecruitPost(@PathVariable("recruit-post-id")long id,
-                                           @RequestBody RecruitPostPatchDto recruitPostPatchDto){
-        recruitPostPatchDto.setId(id);
-        RecruitPost recruitPost = service.updateRecruitPost(mapper.recruitPostPatchDtoToRecruitPost(recruitPostPatchDto));
+                                           @RequestBody RecruitPostUpdateDto recruitPostUpdateDto){
+        recruitPostUpdateDto.setId(id);
+        RecruitPost recruitPost = service.updateRecruitPost(mapper.recruitPostPatchDtoToRecruitPost(recruitPostUpdateDto));
 
         return new ResponseEntity<>(mapper.recruitPostToRecruitPostResponseDto(recruitPost),HttpStatus.OK);
     }
